@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import HideButton from "./components/HideButton";
 import Genre from "./components/Genre";
+import Basket from "./components/Basket";
 
 function App() {
   const bookData = {
@@ -33,30 +34,63 @@ function App() {
   const [showFiction, setShowFiction] = useState(true);
   const [showNonFiction, setShowNonFiction] = useState(true);
   const [showChildren, setShowChildren] = useState(true);
+  const [basket, setBasket] = useState([]);
+
+  const addToBasket = (book) => {
+    setBasket((val) => val.concat(book));
+  };
+
+  const removeFromBasket = (index) => {
+    setBasket((val) => {
+      const copy = [...val];
+      copy.splice(index, 1);
+      return copy;
+    });
+  };
 
   return (
-    <>
-      <h1>Online Bookstore</h1>
-      <HideButton
-        label={showFiction ? "Hide Fiction" : "Show Fiction"}
-        onClick={() => setShowFiction((val) => !val)}
-      ></HideButton>
-      <HideButton
-        label={showNonFiction ? "Hide Non-Fiction" : "Show Non-Fiction"}
-        onClick={() => setShowNonFiction((val) => !val)}
-      ></HideButton>
-      <HideButton
-        label={showChildren ? "Hide Children" : "Show Children"}
-        onClick={() => setShowChildren((val) => !val)}
-      ></HideButton>
-      {showFiction && <Genre genre="Fiction" books={bookData.fiction}></Genre>}
-      {showNonFiction && (
-        <Genre genre="Non-Fiction" books={bookData["non-fiction"]}></Genre>
-      )}
-      {showChildren && (
-        <Genre genre="Children" books={bookData.children}></Genre>
-      )}
-    </>
+    <div style={{ display: "flex" }}>
+      <div style={{ flex: 1, padding: "20px" }}>
+        <h1>Online Bookstore</h1>
+        <HideButton
+          label={showFiction ? "Hide Fiction" : "Show Fiction"}
+          onClick={() => setShowFiction((val) => !val)}
+        ></HideButton>
+        <HideButton
+          label={showNonFiction ? "Hide Non-Fiction" : "Show Non-Fiction"}
+          onClick={() => setShowNonFiction((val) => !val)}
+        ></HideButton>
+        <HideButton
+          label={showChildren ? "Hide Children" : "Show Children"}
+          onClick={() => setShowChildren((val) => !val)}
+        ></HideButton>
+        {showFiction && (
+          <Genre
+            genre="Fiction"
+            books={bookData.fiction}
+            addToBasket={addToBasket}
+          ></Genre>
+        )}
+        {showNonFiction && (
+          <Genre
+            genre="Non-Fiction"
+            books={bookData["non-fiction"]}
+            addToBasket={addToBasket}
+          ></Genre>
+        )}
+        {showChildren && (
+          <Genre
+            genre="Children"
+            books={bookData.children}
+            addToBasket={addToBasket}
+          ></Genre>
+        )}
+      </div>
+
+      <div style={{ flex: 1, padding: "20px", borderLeft: "2px solid gray" }}>
+        <Basket items={basket} removeFromBasket={removeFromBasket}></Basket>
+      </div>
+    </div>
   );
 }
 
